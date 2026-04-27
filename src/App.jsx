@@ -849,6 +849,12 @@ function App() {
             <span className="frequency-unit">MHz</span>
           </div>
           <p className="station-name">{currentStation.name}</p>
+          <p
+            className={`status-message${isLoading ? ' status-message-loading' : ''}`}
+            aria-live="polite"
+          >
+            {statusMessage}
+          </p>
         </section>
 
         <section className="dial-panel" aria-label="Station dial">
@@ -950,13 +956,6 @@ function App() {
             />
           </div>
         </section>
-
-          <p
-            className={`status-message${isLoading ? ' status-message-loading' : ''}`}
-            aria-live="polite"
-          >
-            {statusMessage}
-          </p>
 
         <audio ref={audioRef} preload="none" />
       </section>
