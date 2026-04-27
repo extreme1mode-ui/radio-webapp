@@ -344,22 +344,6 @@
   background: transparent;
 }
 
-.status-message {
-  width: 100%;
-  margin: 8px 0 0;
-  min-height: 16px;
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 300;
-  line-height: 1.4;
-  color: #7a7a7a;
-}
-
-.status-message-loading {
-  color: #5f5f5f;
-}
-
 @media (min-width: 420px) {
   .app-shell {
     padding: 0 6px;

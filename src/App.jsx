@@ -135,7 +135,6 @@ function App() {
   )
   const [isPlaying, setIsPlaying] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [feedbackMessage, setFeedbackMessage] = useState('')
   const [isDialDragging, setIsDialDragging] = useState(false)
   const [volumeValue, setVolumeValue] = useState(DEFAULT_VOLUME)
   const [isVolumeDragging, setIsVolumeDragging] = useState(false)
@@ -246,7 +245,6 @@ function App() {
     function handlePlaying() {
       setIsLoading(false)
       setIsPlaying(true)
-      setFeedbackMessage('')
     }
 
     function handlePause() {
@@ -275,7 +273,6 @@ function App() {
       })
       setIsLoading(false)
       setIsPlaying(false)
-      setFeedbackMessage('This stream could not be played. Please try a different stream URL.')
     }
 
     audio.addEventListener('loadstart', handleLoadStart)
@@ -295,20 +292,6 @@ function App() {
       destroyHlsPlayer()
     }
   }, [])
-
-  let statusMessage = feedbackMessage
-
-  if (!statusMessage) {
-    if (isLoading) {
-      statusMessage = `Connecting to ${currentStation.name}...`
-    } else if (!stationHasSourceConfig(currentStation)) {
-      statusMessage = 'Stream URL is not available.'
-    } else if (isPlaying) {
-      statusMessage = `Now playing ${currentStation.name}.`
-    } else {
-      statusMessage = `${currentStation.name} is ready to play.`
-    }
-  }
 
   function clampFrequency(frequency) {
     return Math.min(scaleMax - TUNER_EDGE_PADDING, Math.max(scaleMin + TUNER_EDGE_PADDING, frequency))
@@ -417,7 +400,6 @@ function App() {
       return
     }
 
-    setFeedbackMessage('')
     setCurrentIndex(index)
 
     if (shouldResumePlayback) {
@@ -648,11 +630,9 @@ function App() {
     if (!stationHasSourceConfig(station)) {
       setIsLoading(false)
       setIsPlaying(false)
-      setFeedbackMessage('Stream URL is not available.')
       return
     }
 
-    setFeedbackMessage('')
     setIsLoading(true)
     setIsPlaying(false)
 
@@ -679,7 +659,7 @@ function App() {
         if (playPromise) {
           await playPromise
         }
-      } catch (error) {
+      } catch {
         if (playRequestRef.current !== playRequestId) {
           return
         }
@@ -687,11 +667,6 @@ function App() {
         clearAudioSource()
         setIsLoading(false)
         setIsPlaying(false)
-        setFeedbackMessage(
-          error instanceof Error
-            ? error.message
-            : 'Playback could not start. Please try another stream URL.',
-        )
       }
     })()
   }
@@ -725,11 +700,9 @@ function App() {
       audio.pause()
       destroyHlsPlayer()
       setIsLoading(false)
-      setFeedbackMessage('')
       return
     }
 
-    setFeedbackMessage('')
     startPlayback(currentStation)
   }
 
@@ -849,12 +822,6 @@ function App() {
             <span className="frequency-unit">MHz</span>
           </div>
           <p className="station-name">{currentStation.name}</p>
-          <p
-            className={`status-message${isLoading ? ' status-message-loading' : ''}`}
-            aria-live="polite"
-          >
-            {statusMessage}
-          </p>
         </section>
 
         <section className="dial-panel" aria-label="Station dial">
