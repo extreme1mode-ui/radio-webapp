@@ -6,14 +6,14 @@ export const stations = [
     name: 'KBS Classic FM',
     frequency: '93.1',
     streamType: 'kbs-api',
-    apiUrl: '/api/kbs/api/v1/landing/live/channel_code/24',
+    apiUrl: '/api/kbs?channelCode=24',
   },
   {
     id: 'mbc-fm4u',
     name: 'MBC FM4U',
     frequency: '91.9',
     streamType: 'plain-text-api',
-    apiUrl: '/api/mbc/aacplay.ashx?agent=webapp&channel=mfm',
+    apiUrl: '/api/mbc?agent=webapp&channel=mfm',
   },
   {
     id: 'sbs-power-fm',

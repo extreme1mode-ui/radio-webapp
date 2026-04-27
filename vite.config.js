@@ -1,23 +1,39 @@
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+import {
+  handleKbsProxyRequest,
+  handleMbcProxyRequest,
+  readRadioApiQuery,
+} from './api/_lib/radioProxy.js'
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      // KBS API requests go through the Vite dev server to avoid browser CORS issues.
-      '/api/kbs': {
-        target: 'https://cfpwwwapi.kbs.co.kr',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/kbs/, ''),
-      },
-      // MBC API requests also go through the Vite dev server.
-      '/api/mbc': {
-        target: 'https://sminiplay.imbc.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/mbc/, ''),
-      },
+function radioApiDevPlugin() {
+  return {
+    name: 'radio-api-dev-plugin',
+    configureServer(server) {
+      server.middlewares.use(async (request, response, next) => {
+        if (!request.url) {
+          next()
+          return
+        }
+
+        if (request.url.startsWith('/api/kbs')) {
+          const { channelCode } = readRadioApiQuery(request.url)
+          await handleKbsProxyRequest(response, channelCode)
+          return
+        }
+
+        if (request.url.startsWith('/api/mbc')) {
+          const { agent, channel } = readRadioApiQuery(request.url)
+          await handleMbcProxyRequest(response, { agent, channel })
+          return
+        }
+
+        next()
+      })
     },
-  },
+  }
+}
+
+export default defineConfig({
+  plugins: [react(), radioApiDevPlugin()],
 })
