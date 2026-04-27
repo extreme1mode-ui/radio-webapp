@@ -41,38 +41,6 @@ function isValidStreamUrl(url) {
   }
 }
 
-function findServiceUrlDeep(value) {
-  if (!value || typeof value !== 'object') {
-    return undefined
-  }
-
-  if (typeof value.service_url === 'string' && value.service_url.trim()) {
-    return value.service_url.trim()
-  }
-
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      const match = findServiceUrlDeep(item)
-
-      if (match) {
-        return match
-      }
-    }
-
-    return undefined
-  }
-
-  for (const nestedValue of Object.values(value)) {
-    const match = findServiceUrlDeep(nestedValue)
-
-    if (match) {
-      return match
-    }
-  }
-
-  return undefined
-}
-
 async function resolveStreamUrl(station) {
   if (station.streamType === 'direct') {
     const directUrl = station.streamUrl?.trim() ?? ''
@@ -85,6 +53,7 @@ async function resolveStreamUrl(station) {
       throw new Error('The direct stream URL is missing or invalid.')
     }
 
+    console.log('[STREAM] final streamUrl:', directUrl)
     return directUrl
   }
 
@@ -95,10 +64,6 @@ async function resolveStreamUrl(station) {
   let response
 
   try {
-    if (station.streamType === 'kbs-api') {
-      console.log('[KBS] Fetching:', station.apiUrl)
-    }
-
     response = await fetch(station.apiUrl)
   } catch {
     throw new Error(
@@ -106,37 +71,37 @@ async function resolveStreamUrl(station) {
     )
   }
 
-  if (station.streamType === 'kbs-api') {
-    console.log('[KBS] Response status:', response.status, response.statusText)
-    console.log('[KBS] Response URL:', response.url)
-  }
-
   if (!response.ok) {
     throw new Error('The station stream information could not be loaded right now.')
   }
 
-  if (station.streamType === 'kbs-api') {
-    const data = await response.json()
-    const directServiceUrl = data?.channel?.item?.[0]?.service_url?.trim()
-    const fallbackServiceUrl = findServiceUrlDeep(data)
-    const serviceUrl = directServiceUrl || fallbackServiceUrl
+  if (station.streamType === 'json-api') {
+    const json = await response.json()
 
-    console.log('[KBS] JSON:', data)
-    console.log('[KBS] Extracted service_url:', serviceUrl)
-
-    if (!serviceUrl) {
-      console.log('[KBS] service_url missing:', true)
-      throw new Error('KBS stream URL could not be found.')
+    if (station.apiUrl.startsWith('/api/kbs')) {
+      console.log('[API] KBS proxy response:', json)
     }
 
-    if (!isValidStreamUrl(serviceUrl)) {
-      throw new Error('The KBS stream URL is missing or invalid.')
+    if (station.apiUrl.startsWith('/api/mbc')) {
+      console.log('[API] MBC proxy response:', json)
     }
 
-    console.log('[KBS] service_url missing:', false)
-    console.log('[KBS] Is m3u8:', isHlsStream(serviceUrl))
+    if (!json?.ok) {
+      throw new Error(json?.error || 'The station API could not provide a stream URL.')
+    }
 
-    return serviceUrl
+    const streamUrl = json.streamUrl?.trim() ?? ''
+
+    if (!streamUrl) {
+      throw new Error('The station API returned an empty stream URL.')
+    }
+
+    if (!isValidStreamUrl(streamUrl)) {
+      throw new Error('The station API returned an invalid stream URL.')
+    }
+
+    console.log('[STREAM] final streamUrl:', streamUrl)
+    return streamUrl
   }
 
   if (station.streamType === 'plain-text-api') {
@@ -150,6 +115,7 @@ async function resolveStreamUrl(station) {
       throw new Error('The station API returned an invalid stream URL.')
     }
 
+    console.log('[STREAM] final streamUrl:', text)
     return text
   }
 
@@ -300,7 +266,7 @@ function App() {
     }
 
     function handleError() {
-      console.log('[AUDIO] Error:', {
+      console.log('[AUDIO] error details:', {
         currentSrc: audio.currentSrc,
         errorCode: audio.error?.code,
         errorMessage: audio.error?.message,

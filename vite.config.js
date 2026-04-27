@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import {
   handleKbsProxyRequest,
   handleMbcProxyRequest,
+  handleOptionsRequest,
   readRadioApiQuery,
 } from './api/_lib/radioProxy.js'
 
@@ -13,6 +14,10 @@ function radioApiDevPlugin() {
       server.middlewares.use(async (request, response, next) => {
         if (!request.url) {
           next()
+          return
+        }
+
+        if (request.url.startsWith('/api/') && handleOptionsRequest(request, response)) {
           return
         }
 
