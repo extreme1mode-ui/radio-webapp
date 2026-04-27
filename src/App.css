@@ -1,23 +1,30 @@
 .app-shell {
   min-height: 100svh;
+  width: 100%;
   display: flex;
   justify-content: center;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .radio-app {
-  --screen-width: min(100vw, 375px);
+  --app-max-width: 393px;
   --font-display: 'Guggenheim Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-system: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  width: var(--screen-width);
+  width: 100%;
+  max-width: var(--app-max-width);
   min-height: 100svh;
-  padding: 0 6px 12px;
+  margin: 0 auto;
+  padding: 0 0 12px;
   box-sizing: border-box;
   color: #000000;
   background: #ffffff;
 }
 
 .app-header {
-  padding: 64px 16px 0;
+  width: 100%;
+  padding: 64px 0 0;
+  box-sizing: border-box;
 }
 
 .app-title {
@@ -38,6 +45,7 @@
 }
 
 .station-display {
+  width: 100%;
   margin-top: 52px;
   text-align: center;
 }
@@ -76,6 +84,7 @@
 }
 
 .dial-panel {
+  width: 100%;
   margin-top: 32px;
   position: relative;
   background: #000000;
@@ -187,6 +196,7 @@
 }
 
 .control-panel {
+  width: 100%;
   margin-top: 12px;
   height: 256px;
   display: flex;
@@ -330,7 +340,8 @@
 }
 
 .status-message {
-  margin: 14px 8px 0;
+  width: 100%;
+  margin: 14px 0 0;
   min-height: 18px;
   text-align: center;
   font-family: var(--font-display);
@@ -346,8 +357,7 @@
 
 @media (min-width: 420px) {
   .app-shell {
-    padding: 24px 0;
-    box-sizing: border-box;
+    padding: 24px 16px;
   }
 
   .radio-app {
