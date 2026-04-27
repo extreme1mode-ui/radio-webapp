@@ -1,0 +1,36 @@
+html {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  background: #ffffff;
+  color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #ffffff;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img,
+svg {
+  display: block;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+@media (min-width: 420px) {
+  html,
+  body {
+    background: #efefef;
+  }
+}
