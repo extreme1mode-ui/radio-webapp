@@ -1,5 +1,77 @@
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-Thin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-ExtraLight.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-Light.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-SemiBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-ExtraBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Guggenheim Sans';
+  src: url('./assets/fonts/GuggenheimSans-Black.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
 html {
-  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Guggenheim Sans', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   background: #ffffff;
   color: #000000;
   -webkit-font-smoothing: antialiased;
@@ -10,6 +82,7 @@ body {
   margin: 0;
   min-width: 320px;
   background: #ffffff;
+  font-family: 'Guggenheim Sans', 'Inter', 'Helvetica Neue', Arial, sans-serif;
 }
 
 button,

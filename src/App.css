@@ -10,7 +10,7 @@
 .radio-app {
   --app-max-width: 393px;
   --font-display: 'Guggenheim Sans', 'Helvetica Neue', Arial, sans-serif;
-  --font-system: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-system: 'Guggenheim Sans', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   width: 100%;
   max-width: var(--app-max-width);
   min-height: 100svh;
