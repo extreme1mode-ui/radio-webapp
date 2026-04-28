@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__figma__get_design_context",
+      "mcp__figma__get_screenshot",
+      "Bash(curl *)",
+      "mcp__figma__whoami",
+      "mcp__figma__get_metadata",
+      "Bash(python3 *)",
+      "Bash(git -C /Users/song-yeon-woo/Desktop/PencilDev/radio-webapp status)",
+      "Bash(git -C /Users/song-yeon-woo/Desktop/PencilDev/radio-webapp diff)",
+      "Bash(git -C /Users/song-yeon-woo/Desktop/PencilDev/radio-webapp add src/App.css)",
+      "Bash(git -C /Users/song-yeon-woo/Desktop/PencilDev/radio-webapp commit -m ' *)",
+      "Bash(git *)",
+      "Bash(npm run *)"
+    ]
+  }
+}
