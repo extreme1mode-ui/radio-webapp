@@ -153,6 +153,7 @@ function App() {
   const tunerCommitTimeoutRef = useRef(null)
   const volumeAnimationFrameRef = useRef(0)
   const activeVolumePointerIdRef = useRef(null)
+  const activeVolumeTargetRef = useRef(null)
   const currentIndexRef = useRef(currentIndex)
   const visualFrequencyRef = useRef(visualFrequency)
   const volumeValueRef = useRef(volumeValue)
@@ -234,6 +235,30 @@ function App() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (!isVolumeDragging) {
+      return undefined
+    }
+
+    function handleWindowPointerMove(event) {
+      handleVolumePointerMove(event)
+    }
+
+    function handleWindowPointerEnd(event) {
+      handleVolumePointerEnd(event)
+    }
+
+    window.addEventListener('pointermove', handleWindowPointerMove, { passive: false })
+    window.addEventListener('pointerup', handleWindowPointerEnd, { passive: false })
+    window.addEventListener('pointercancel', handleWindowPointerEnd, { passive: false })
+
+    return () => {
+      window.removeEventListener('pointermove', handleWindowPointerMove)
+      window.removeEventListener('pointerup', handleWindowPointerEnd)
+      window.removeEventListener('pointercancel', handleWindowPointerEnd)
+    }
+  }, [isVolumeDragging])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -494,9 +519,22 @@ function App() {
   }
 
   function handleVolumePointerDown(event) {
+    if (event.pointerType === 'mouse' && event.button !== 0) {
+      return
+    }
+
     activeVolumePointerIdRef.current = event.pointerId
+    activeVolumeTargetRef.current = event.currentTarget
     setIsVolumeDragging(true)
-    event.currentTarget.setPointerCapture(event.pointerId)
+
+    if (event.currentTarget.setPointerCapture) {
+      try {
+        event.currentTarget.setPointerCapture(event.pointerId)
+      } catch {
+        // Mobile browsers can reject pointer capture in some edge cases.
+      }
+    }
+
     scheduleVolumeUpdate(getVolumeFromClientX(event.clientX))
     event.preventDefault()
   }
@@ -516,8 +554,18 @@ function App() {
     }
 
     scheduleVolumeUpdate(getVolumeFromClientX(event.clientX))
+
+    if (
+      activeVolumeTargetRef.current?.hasPointerCapture &&
+      activeVolumeTargetRef.current.hasPointerCapture(event.pointerId)
+    ) {
+      activeVolumeTargetRef.current.releasePointerCapture(event.pointerId)
+    }
+
     activeVolumePointerIdRef.current = null
+    activeVolumeTargetRef.current = null
     setIsVolumeDragging(false)
+    event.preventDefault()
   }
 
   function handleVolumeKeyDown(event) {
