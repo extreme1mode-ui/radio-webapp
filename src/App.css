@@ -1,64 +1,57 @@
-/* ─── Shell ─────────────────────────────────────────────────────────────── */
-
 .app-shell {
+  min-height: 100svh;
+  min-height: 100dvh;
   height: 100svh;
   height: 100dvh;
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
   overflow: hidden;
+  padding: 0;
 }
 
-/* ─── App container ─────────────────────────────────────────────────────── */
-/*
-  --scale is the single source of truth for all sizing.
-  It picks the smaller of the two viewport ratios so the entire
-  layout fits within any screen without scrolling.
-  Base design: 375 × 812 px (iPhone 13 mini).
-*/
-
 .radio-app {
-  --scale: min(calc(100vw / 375), calc(100dvh / 812));
+  --app-max-width: 375px;
   --font-display: 'Guggenheim Sans', 'Helvetica Neue', Arial, sans-serif;
-  width: calc(375px * var(--scale));
-  height: calc(812px * var(--scale));
-  flex-shrink: 0;
+  --font-system: 'Guggenheim Sans', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  width: 100%;
+  max-width: var(--app-max-width);
+  min-height: 100%;
+  height: 100%;
+  max-height: 812px;
+  margin: 0 auto;
+  padding: 0;
   overflow: hidden;
   color: #000000;
   background: #ffffff;
 }
 
-/* ─── Header ─────────────────────────────────────────────────────────────── */
-
 .app-header {
   width: 100%;
-  padding: calc(64px * var(--scale)) calc(22px * var(--scale)) 0;
+  padding: 64px 22px 0;
   box-sizing: border-box;
 }
 
 .app-title {
   display: inline-flex;
   align-items: center;
-  gap: calc(6px * var(--scale));
+  gap: 6px;
   font-family: var(--font-display);
-  font-size: calc(23.7px * var(--scale));
+  font-size: 23.7px;
   font-weight: 400;
   line-height: 1;
-  letter-spacing: calc(-0.47px * var(--scale));
+  letter-spacing: -0.47px;
 }
 
 .chevron-icon {
-  width: calc(24px * var(--scale));
-  height: calc(24px * var(--scale));
+  width: 24px;
+  height: 24px;
   flex: none;
 }
 
-/* ─── Station display (frequency + name) ────────────────────────────────── */
-
 .station-display {
   width: 100%;
-  margin-top: calc(52px * var(--scale));
+  margin-top: 52px;
   text-align: center;
 }
 
@@ -66,13 +59,13 @@
   display: inline-flex;
   align-items: flex-end;
   justify-content: center;
-  height: calc(125px * var(--scale));
+  height: 125px;
   line-height: 1;
 }
 
 .frequency-value {
   font-family: var(--font-display);
-  font-size: calc(125px * var(--scale));
+  font-size: 125px;
   font-weight: 200;
   line-height: 1;
   letter-spacing: -0.06em;
@@ -80,29 +73,28 @@
 
 .frequency-unit {
   font-family: var(--font-display);
-  font-size: calc(20px * var(--scale));
+  font-size: 20px;
   font-weight: 300;
   line-height: 1.5;
   color: #a2a2a2;
+  padding: 0;
 }
 
 .station-name {
-  margin: calc(10px * var(--scale)) 0 0;
+  margin: 10px 0 0;
   font-family: var(--font-display);
-  font-size: calc(16px * var(--scale));
+  font-size: 16px;
   font-weight: 300;
   line-height: 1;
 }
 
-/* ─── Tuner / dial ───────────────────────────────────────────────────────── */
-
 .dial-panel {
-  width: calc(363px * var(--scale));
-  margin: calc(32px * var(--scale)) calc(6px * var(--scale)) 0;
+  width: calc(100% - 12px);
+  margin: 32px 6px 0;
   position: relative;
   background: #000000;
-  height: calc(215px * var(--scale));
-  border-radius: calc(20px * var(--scale));
+  height: 215px;
+  border-radius: 20px;
   overflow: hidden;
 }
 
@@ -129,7 +121,7 @@
 
 .dial-track {
   position: relative;
-  height: calc(215px * var(--scale));
+  height: 215px;
   padding: 0 50%;
   box-sizing: border-box;
 }
@@ -147,24 +139,24 @@
 
 .dial-scale-top {
   top: 0;
-  height: calc(68px * var(--scale));
+  height: 68px;
 }
 
 .dial-scale-bottom {
-  bottom: calc(38px * var(--scale));
-  height: calc(68px * var(--scale));
+  bottom: 38px;
+  height: 68px;
 }
 
 .dial-tick {
   position: absolute;
   top: 0;
   width: 1px;
-  height: calc(35px * var(--scale));
+  height: 35px;
   background: rgba(255, 255, 255, 0.42);
 }
 
 .dial-tick-major {
-  height: calc(67px * var(--scale));
+  height: 67px;
   background: rgba(255, 255, 255, 0.56);
 }
 
@@ -177,8 +169,8 @@
   position: absolute;
   left: 50%;
   top: 0;
-  bottom: calc(36px * var(--scale));
-  width: calc(3px * var(--scale));
+  bottom: 36px;
+  width: 3px;
   transform: translateX(-50%);
   background: #ff4d67;
   box-shadow: 0 0 0 1px rgba(255, 77, 103, 0.15);
@@ -187,10 +179,10 @@
 .dial-labels {
   position: absolute;
   inset-inline: 0;
-  bottom: calc(10px * var(--scale));
-  height: calc(22px * var(--scale));
+  bottom: 10px;
+  height: 22px;
   font-family: var(--font-display);
-  font-size: calc(19.45px * var(--scale));
+  font-size: 19.45px;
   font-weight: 300;
   line-height: 1;
   color: #797979;
@@ -200,6 +192,7 @@
   position: absolute;
   transform: translateX(-50%);
   white-space: nowrap;
+  color: #ffffff;
   color: #797979;
 }
 
@@ -207,30 +200,26 @@
   color: #ffffff;
 }
 
-/* ─── Control card ───────────────────────────────────────────────────────── */
-
 .control-panel {
-  width: calc(363px * var(--scale));
-  margin: calc(12px * var(--scale)) calc(6px * var(--scale)) 0;
-  height: calc(256px * var(--scale));
+  width: calc(100% - 12px);
+  margin: 12px 6px 0;
+  height: 256px;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0;
   background: #f5f5f5;
   border: 1.5px solid #e7e7e7;
-  border-radius: calc(20px * var(--scale)) calc(20px * var(--scale)) calc(52px * var(--scale)) calc(52px * var(--scale));
+  border-radius: 20px 20px 52px 52px;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
-/* Playback controls row: py-24px from Figma */
 .control-row {
   display: flex;
-  width: calc(242px * var(--scale));
+  width: 242px;
   align-items: center;
   justify-content: space-between;
-  padding: calc(24px * var(--scale)) 0;
+  padding: 24px 0;
 }
 
 .control-button {
@@ -255,45 +244,41 @@
 
 .control-button:focus-visible {
   outline: 2px solid #ff4d67;
-  outline-offset: calc(6px * var(--scale));
+  outline-offset: 6px;
   border-radius: 999px;
 }
 
 .control-button-small {
-  width: calc(32px * var(--scale));
-  height: calc(32px * var(--scale));
+  width: 32px;
+  height: 32px;
   color: #8f8f8f;
 }
 
 .control-button-large {
-  width: calc(50px * var(--scale));
-  height: calc(50px * var(--scale));
+  width: 50px;
+  height: 50px;
   color: #2c2c2c;
 }
 
 .transport-icon {
-  width: calc(32px * var(--scale));
-  height: calc(32px * var(--scale));
+  width: 32px;
+  height: 32px;
 }
 
 .transport-icon-large {
-  width: calc(50px * var(--scale));
-  height: calc(50px * var(--scale));
+  width: 50px;
+  height: 50px;
 }
 
-/* ─── Divider (separates controls from speaker panel) ───────────────────── */
-
 .panel-divider {
-  width: calc(322px * var(--scale));
+  width: 322px;
   margin: 0 auto;
   border-top: 1.5px solid #dddddd;
 }
 
-/* ─── Speaker / volume panel ─────────────────────────────────────────────── */
-
 .speaker-panel {
-  width: calc(331px * var(--scale));
-  margin: calc(24px * var(--scale)) auto 0;
+  width: 331px;
+  margin: 24px auto 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -303,13 +288,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: calc(331px * var(--scale));
-  margin: 0 auto calc(12px * var(--scale));
+  width: 331px;
+  margin: 0 auto 12px;
 }
 
 .volume-icon {
-  width: calc(16px * var(--scale));
-  height: calc(16px * var(--scale));
+  width: 16px;
+  height: 16px;
   color: #9c9c9c;
 }
 
@@ -327,14 +312,14 @@
 
 .speaker-grid-interactive:focus-visible {
   outline: 2px solid #ff4d67;
-  outline-offset: calc(6px * var(--scale));
-  border-radius: calc(12px * var(--scale));
+  outline-offset: 6px;
+  border-radius: 12px;
 }
 
 .speaker-grid {
   display: grid;
-  grid-template-columns: repeat(16, calc(12px * var(--scale)));
-  gap: calc(7px * var(--scale)) calc(9px * var(--scale));
+  grid-template-columns: repeat(16, 12px);
+  gap: 7px 9px;
   width: max-content;
   margin: 0 auto;
   align-items: center;
@@ -342,21 +327,33 @@
 }
 
 .speaker-dot {
-  width: calc(12px * var(--scale));
-  height: calc(12px * var(--scale));
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #d3d3d3;
+}
+
+.speaker-dot-dark {
+  background: #000000;
+}
+
+.speaker-dot-half {
+  background: linear-gradient(90deg, #000000 54%, #d3d3d3 54%);
 }
 
 .speaker-dot-empty {
   background: transparent;
 }
 
-/* ─── Desktop: floating card ─────────────────────────────────────────────── */
-
 @media (min-width: 420px) {
+  .app-shell {
+    padding: 0 6px;
+    align-items: center;
+  }
+
   .radio-app {
-    border-radius: calc(28px * var(--scale));
+    min-height: unset;
+    border-radius: 28px;
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.08);
   }
 }
