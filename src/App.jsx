@@ -1,6 +1,12 @@
 import Hls from 'hls.js'
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import nextIcon from './assets/icons/next.svg'
+import pauseIcon from './assets/icons/pause.svg'
+import playIcon from './assets/icons/play.svg'
+import prevIcon from './assets/icons/prev.svg'
+import volumeHighIcon from './assets/icons/volume-high.svg'
+import volumeLowIcon from './assets/icons/volume-low.svg'
 import { stations } from './stations'
 
 const TUNER_STEP = 0.1
@@ -1026,84 +1032,33 @@ function ChevronIcon() {
   )
 }
 
+function TransportIcon({ src, className }) {
+  return (
+    <img
+      src={src}
+      className={`transport-icon ${className ?? ''}`}
+      alt=""
+      aria-hidden="true"
+      draggable="false"
+    />
+  )
+}
+
 function SkipIcon({ direction }) {
   return (
-    <svg viewBox="0 0 32 32" className="transport-icon" aria-hidden="true">
-      {direction === 'previous' ? (
-        <g>
-          <path
-            d="M10 7.5V24.5"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M21 8.5L12.75 16L21 23.5"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </g>
-      ) : (
-        <g>
-          <path
-            d="M22 7.5V24.5"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M11 8.5L19.25 16L11 23.5"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-          />
-        </g>
-      )}
-    </svg>
+    <TransportIcon
+      src={direction === 'previous' ? prevIcon : nextIcon}
+      className="transport-icon-small"
+    />
   )
 }
 
 function PauseIcon() {
-  return (
-    <svg viewBox="0 0 50 50" className="transport-icon transport-icon-large" aria-hidden="true">
-      <path
-        d="M20 11V39"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="4.25"
-      />
-      <path
-        d="M30 11V39"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeWidth="4.25"
-      />
-    </svg>
-  )
+  return <TransportIcon src={pauseIcon} className="transport-icon-large" />
 }
 
 function PlayIcon() {
-  return (
-    <svg viewBox="0 0 50 50" className="transport-icon transport-icon-large" aria-hidden="true">
-      <path
-        d="M19 11.5L33.5 25L19 38.5V11.5Z"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.5"
-      />
-    </svg>
-  )
+  return <TransportIcon src={playIcon} className="transport-icon-large" />
 }
 
 function VolumeIcon({ side, volumeValue }) {
@@ -1113,32 +1068,14 @@ function VolumeIcon({ side, volumeValue }) {
       : Math.max(0.42, 0.45 + volumeValue * 0.55)
 
   return (
-    <svg
-      viewBox="0 0 16 16"
+    <img
+      src={side === 'left' ? volumeLowIcon : volumeHighIcon}
       className={`volume-icon volume-icon-${side}`}
       style={{ opacity }}
+      alt=""
       aria-hidden="true"
-    >
-      <path d="M2 6.2H4.7L7.4 4V12L4.7 9.8H2V6.2Z" fill="currentColor" />
-      {side === 'right' ? (
-        <>
-          <path
-            d="M9.6 6.2C10.4 6.9 10.8 7.4 10.8 8C10.8 8.6 10.4 9.1 9.6 9.8"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M11.2 4.8C12.4 5.8 13 6.8 13 8C13 9.2 12.4 10.2 11.2 11.2"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-        </>
-      ) : null}
-    </svg>
+      draggable="false"
+    />
   )
 }
 
