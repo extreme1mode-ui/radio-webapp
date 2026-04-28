@@ -16,6 +16,8 @@ const TUNER_SNAP_DELAY = 120
 const TUNER_SNAP_THRESHOLD_MHZ = 0.3
 const TUNER_SNAP_ANIMATION_MS = 180
 const DEFAULT_VOLUME = 0.16
+const APP_BASE_WIDTH = 375
+const APP_BASE_HEIGHT = 812
 
 const speakerPattern = [
   ['dark', 'dark', 'half', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light'],
@@ -45,6 +47,14 @@ function isValidStreamUrl(url) {
   } catch {
     return false
   }
+}
+
+function getCanvasScale() {
+  if (typeof window === 'undefined') {
+    return 1
+  }
+
+  return Math.min(window.innerWidth / APP_BASE_WIDTH, window.innerHeight / APP_BASE_HEIGHT)
 }
 
 async function resolveStreamUrl(station) {
@@ -144,6 +154,7 @@ function App() {
   const [isDialDragging, setIsDialDragging] = useState(false)
   const [volumeValue, setVolumeValue] = useState(DEFAULT_VOLUME)
   const [isVolumeDragging, setIsVolumeDragging] = useState(false)
+  const [canvasScale, setCanvasScale] = useState(getCanvasScale)
   const audioRef = useRef(null)
   const hlsRef = useRef(null)
   const playRequestRef = useRef(0)
@@ -232,6 +243,19 @@ function App() {
       if (volumeAnimationFrameRef.current) {
         window.cancelAnimationFrame(volumeAnimationFrameRef.current)
       }
+    }
+  }, [])
+
+  useEffect(() => {
+    function handleCanvasResize() {
+      setCanvasScale(getCanvasScale())
+    }
+
+    handleCanvasResize()
+    window.addEventListener('resize', handleCanvasResize)
+
+    return () => {
+      window.removeEventListener('resize', handleCanvasResize)
     }
   }, [])
 
@@ -813,125 +837,130 @@ function App() {
   }, [scaleMax, scaleMin])
 
   return (
-    <main className="app-shell">
-      <section className="radio-app" aria-label="FM radio app">
-        <header className="app-header">
-          <div className="app-title">
-            <span>FM RADIO</span>
-            <ChevronIcon />
-          </div>
-        </header>
+    <main className="app-stage">
+      <div
+        className="app-canvas"
+        style={{ transform: `translateX(-50%) scale(${canvasScale})` }}
+      >
+        <section className="radio-app" aria-label="FM radio app">
+          <header className="app-header">
+            <div className="app-title">
+              <span>FM RADIO</span>
+              <ChevronIcon />
+            </div>
+          </header>
 
-        <section className="station-display" aria-label="Current station">
-          <div className="frequency-readout">
-            <span className="frequency-value">{visualFrequency.toFixed(1)}</span>
-            <span className="frequency-unit">MHz</span>
-          </div>
-          <p className="station-name">{currentStation.name}</p>
-        </section>
+          <section className="station-display" aria-label="Current station">
+            <div className="frequency-readout">
+              <span className="frequency-value">{visualFrequency.toFixed(1)}</span>
+              <span className="frequency-unit">MHz</span>
+            </div>
+            <p className="station-name">{currentStation.name}</p>
+          </section>
 
-        <section className="dial-panel" aria-label="Station dial">
-          <div
-            ref={tunerViewportRef}
-            className={`dial-viewport${isDialDragging ? ' dial-viewport-dragging' : ''}`}
-            onScroll={handleTunerScroll}
-            onMouseDown={handleDialMouseDown}
-            onTouchStart={handleDialTouchStart}
-          >
-            <div className="dial-track">
-              <div className="dial-scale-strip" style={{ width: `${scaleWidth}px` }}>
-                <div className="dial-scale dial-scale-top">
-                  {dialTicks.map((tick) => (
-                    <span
-                      key={`top-${tick.id}`}
-                      className={tick.isMajor ? 'dial-tick dial-tick-major' : 'dial-tick'}
-                      style={{ left: `${tick.left}px` }}
-                    />
-                  ))}
-                </div>
+          <section className="dial-panel" aria-label="Station dial">
+            <div
+              ref={tunerViewportRef}
+              className={`dial-viewport${isDialDragging ? ' dial-viewport-dragging' : ''}`}
+              onScroll={handleTunerScroll}
+              onMouseDown={handleDialMouseDown}
+              onTouchStart={handleDialTouchStart}
+            >
+              <div className="dial-track">
+                <div className="dial-scale-strip" style={{ width: `${scaleWidth}px` }}>
+                  <div className="dial-scale dial-scale-top">
+                    {dialTicks.map((tick) => (
+                      <span
+                        key={`top-${tick.id}`}
+                        className={tick.isMajor ? 'dial-tick dial-tick-major' : 'dial-tick'}
+                        style={{ left: `${tick.left}px` }}
+                      />
+                    ))}
+                  </div>
 
-                <div className="dial-scale dial-scale-bottom">
-                  {dialTicks.map((tick) => (
-                    <span
-                      key={`bottom-${tick.id}`}
-                      className={tick.isMajor ? 'dial-tick dial-tick-major' : 'dial-tick'}
-                      style={{ left: `${tick.left}px` }}
-                    />
-                  ))}
-                </div>
+                  <div className="dial-scale dial-scale-bottom">
+                    {dialTicks.map((tick) => (
+                      <span
+                        key={`bottom-${tick.id}`}
+                        className={tick.isMajor ? 'dial-tick dial-tick-major' : 'dial-tick'}
+                        style={{ left: `${tick.left}px` }}
+                      />
+                    ))}
+                  </div>
 
-                <div className="dial-labels" aria-hidden="true">
-                  {sortedStations.map((station, index) => (
-                    <span
-                      key={station.id}
-                      className={
-                        index === currentIndex
-                          ? 'dial-label dial-label-current'
-                          : 'dial-label'
-                      }
-                      style={{ left: `${stationPositions[index]}px` }}
-                    >
-                      {station.frequency}
-                    </span>
-                  ))}
+                  <div className="dial-labels" aria-hidden="true">
+                    {sortedStations.map((station, index) => (
+                      <span
+                        key={station.id}
+                        className={
+                          index === currentIndex
+                            ? 'dial-label dial-label-current'
+                            : 'dial-label'
+                        }
+                        style={{ left: `${stationPositions[index]}px` }}
+                      >
+                        {station.frequency}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="dial-marker" aria-hidden="true" />
-        </section>
+            <div className="dial-marker" aria-hidden="true" />
+          </section>
 
-        <section className="control-panel" aria-label="Playback controls">
-          <div className="control-row">
-            <ControlButton
-              label="Previous station"
-              className="control-button-small"
-              onClick={goToPreviousStation}
-            >
-              <SkipIcon direction="previous" />
-            </ControlButton>
+          <section className="control-panel" aria-label="Playback controls">
+            <div className="control-row">
+              <ControlButton
+                label="Previous station"
+                className="control-button-small"
+                onClick={goToPreviousStation}
+              >
+                <SkipIcon direction="previous" />
+              </ControlButton>
 
-            <ControlButton
-              label={isPlaying ? 'Pause' : 'Play'}
-              className="control-button-large"
-              onClick={togglePlayback}
-            >
-              {isPlaying ? <PauseIcon /> : <PlayIcon />}
-            </ControlButton>
+              <ControlButton
+                label={isPlaying ? 'Pause' : 'Play'}
+                className="control-button-large"
+                onClick={togglePlayback}
+              >
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+              </ControlButton>
 
-            <ControlButton
-              label="Next station"
-              className="control-button-small"
-              onClick={goToNextStation}
-            >
-              <SkipIcon direction="next" />
-            </ControlButton>
-          </div>
-
-          <div className="panel-divider" aria-hidden="true" />
-
-          <div className="speaker-panel">
-            <div className="speaker-volume-row">
-              <VolumeIcon side="left" volumeValue={volumeValue} />
-              <VolumeIcon side="right" volumeValue={volumeValue} />
+              <ControlButton
+                label="Next station"
+                className="control-button-small"
+                onClick={goToNextStation}
+              >
+                <SkipIcon direction="next" />
+              </ControlButton>
             </div>
-            <SpeakerGrid
-              isDragging={isVolumeDragging}
-              volumeValue={volumeValue}
-              speakerGridRef={speakerGridRef}
-              onPointerDown={handleVolumePointerDown}
-              onPointerMove={handleVolumePointerMove}
-              onPointerUp={handleVolumePointerEnd}
-              onPointerCancel={handleVolumePointerEnd}
-              onLostPointerCapture={handleVolumePointerEnd}
-              onKeyDown={handleVolumeKeyDown}
-            />
-          </div>
-        </section>
 
-        <audio ref={audioRef} preload="none" />
-      </section>
+            <div className="panel-divider" aria-hidden="true" />
+
+            <div className="speaker-panel">
+              <div className="speaker-volume-row">
+                <VolumeIcon side="left" volumeValue={volumeValue} />
+                <VolumeIcon side="right" volumeValue={volumeValue} />
+              </div>
+              <SpeakerGrid
+                isDragging={isVolumeDragging}
+                volumeValue={volumeValue}
+                speakerGridRef={speakerGridRef}
+                onPointerDown={handleVolumePointerDown}
+                onPointerMove={handleVolumePointerMove}
+                onPointerUp={handleVolumePointerEnd}
+                onPointerCancel={handleVolumePointerEnd}
+                onLostPointerCapture={handleVolumePointerEnd}
+                onKeyDown={handleVolumeKeyDown}
+              />
+            </div>
+          </section>
+
+          <audio ref={audioRef} preload="none" />
+        </section>
+      </div>
     </main>
   )
 }

@@ -114,10 +114,3 @@ svg {
   min-height: 100dvh;
   overflow: hidden;
 }
-
-@media (min-width: 420px) {
-  html,
-  body {
-    background: #efefef;
-  }
-}
