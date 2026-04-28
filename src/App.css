@@ -151,13 +151,19 @@
   position: absolute;
   top: 0;
   width: 1px;
-  height: 35px;
-  background: rgba(255, 255, 255, 0.42);
+  height: 18px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.dial-tick-medium {
+  height: 36px;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .dial-tick-major {
   height: 67px;
-  background: rgba(255, 255, 255, 0.56);
+  width: 1.5px;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .dial-scale-bottom .dial-tick {
