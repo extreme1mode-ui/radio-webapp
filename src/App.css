@@ -151,18 +151,12 @@
   position: absolute;
   top: 0;
   width: 1px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.8);
-}
-
-.dial-tick-medium {
-  height: 36px;
+  height: 35px;
   background: rgba(255, 255, 255, 0.8);
 }
 
 .dial-tick-major {
   height: 67px;
-  width: 1.5px;
   background: rgba(255, 255, 255, 0.8);
 }
 
@@ -175,7 +169,7 @@
   position: absolute;
   left: 50%;
   top: 0;
-  bottom: 36px;
+  bottom: 38px;
   width: 3px;
   transform: translateX(-50%);
   background: #ff4d67;
@@ -185,8 +179,8 @@
 .dial-labels {
   position: absolute;
   inset-inline: 0;
-  bottom: 10px;
-  height: 22px;
+  bottom: 12px;
+  height: 19px;
   font-family: var(--font-display);
   font-size: 19.45px;
   font-weight: 300;

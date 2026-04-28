@@ -5,7 +5,6 @@ import { stations } from './stations'
 
 const TUNER_STEP = 0.1
 const TUNER_PIXELS_PER_STEP = 10
-const DIAL_SUB_TICKS = 5
 const TUNER_EDGE_PADDING = 1.5
 const TUNER_SNAP_DELAY = 120
 const TUNER_SNAP_THRESHOLD_MHZ = 0.3
@@ -169,17 +168,12 @@ function App() {
     (frequency) => ((frequency - scaleMin) / TUNER_STEP) * TUNER_PIXELS_PER_STEP,
   )
   const dialTicks = Array.from(
-    { length: Math.round((scaleMax - scaleMin) / TUNER_STEP) * DIAL_SUB_TICKS + 1 },
-    (_, index) => {
-      const isMajor = index % (DIAL_SUB_TICKS * 5) === 0
-      const isMedium = !isMajor && index % DIAL_SUB_TICKS === 0
-      return {
-        id: index,
-        left: index * (TUNER_PIXELS_PER_STEP / DIAL_SUB_TICKS),
-        isMajor,
-        isMedium,
-      }
-    },
+    { length: Math.round((scaleMax - scaleMin) / TUNER_STEP) + 1 },
+    (_, index) => ({
+      id: index,
+      left: index * TUNER_PIXELS_PER_STEP,
+      isMajor: index % 5 === 0,
+    }),
   )
 
   const currentStation = sortedStations[currentIndex]
@@ -844,7 +838,7 @@ function App() {
                   {dialTicks.map((tick) => (
                     <span
                       key={`top-${tick.id}`}
-                      className={tick.isMajor ? 'dial-tick dial-tick-major' : tick.isMedium ? 'dial-tick dial-tick-medium' : 'dial-tick'}
+                      className={tick.isMajor ? 'dial-tick dial-tick-major' : 'dial-tick'}
                       style={{ left: `${tick.left}px` }}
                     />
                   ))}
@@ -854,7 +848,7 @@ function App() {
                   {dialTicks.map((tick) => (
                     <span
                       key={`bottom-${tick.id}`}
-                      className={tick.isMajor ? 'dial-tick dial-tick-major' : tick.isMedium ? 'dial-tick dial-tick-medium' : 'dial-tick'}
+                      className={tick.isMajor ? 'dial-tick dial-tick-major' : 'dial-tick'}
                       style={{ left: `${tick.left}px` }}
                     />
                   ))}
