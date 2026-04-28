@@ -1,3 +1,4 @@
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import Hls from 'hls.js'
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
@@ -932,6 +933,7 @@ function App() {
 
         <audio ref={audioRef} preload="none" />
       </section>
+      <SpeedInsights />
     </main>
   )
 }
