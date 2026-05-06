@@ -2,7 +2,8 @@
   min-height: 100dvh;
   width: 100%;
   overflow: hidden;
-  background: #ffffff;
+  background: var(--bg);
+  transition: background-color 250ms ease;
 }
 
 .radio-app {
@@ -16,9 +17,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  color: #000000;
-  background: #ffffff;
+  color: var(--text-primary);
+  background: var(--bg);
   box-sizing: border-box;
+  transition: background-color 250ms ease, color 250ms ease;
 }
 
 .app-header {
@@ -26,6 +28,9 @@
   margin: 0 -6px;
   padding: 0 6px 0 22px;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .app-title {
@@ -44,6 +49,41 @@
   height: 24px;
   flex: none;
 }
+
+/* ─── Theme toggle ───────────────────────────────────────────────────────── */
+
+.theme-toggle {
+  width: 34px;
+  height: 20px;
+  border-radius: 10px;
+  border: none;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  background: var(--toggle-track);
+  flex-shrink: 0;
+  transition: background-color 250ms ease;
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid #ff4d67;
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.theme-toggle-dot {
+  position: absolute;
+  top: 3px;
+  left: var(--toggle-x);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--toggle-dot);
+  transition: left 250ms ease, background-color 250ms ease;
+  pointer-events: none;
+}
+
+/* ─── Station display ────────────────────────────────────────────────────── */
 
 .station-display {
   width: 100%;
@@ -74,8 +114,9 @@
   font-size: 20px;
   font-weight: 300;
   line-height: 1.5;
-  color: #a2a2a2;
+  color: var(--text-secondary);
   padding: 0;
+  transition: color 250ms ease;
 }
 
 .station-name {
@@ -86,6 +127,8 @@
   line-height: 1;
 }
 
+/* ─── Tuner / dial ───────────────────────────────────────────────────────── */
+
 .bottom-section {
   margin-top: auto;
 }
@@ -94,10 +137,11 @@
   width: 100%;
   margin: 0;
   position: relative;
-  background: #000000;
+  background: var(--tuner-bg);
   height: 231px;
   border-radius: 20px;
   overflow: hidden;
+  transition: background-color 250ms ease;
 }
 
 .dial-viewport {
@@ -154,12 +198,13 @@
   top: 0;
   width: 1px;
   height: 35px;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--tuner-tick);
+  transition: background-color 250ms ease;
 }
 
 .dial-tick-major {
   height: 67px;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--tuner-tick);
 }
 
 .dial-scale-bottom .dial-tick {
@@ -187,20 +232,23 @@
   font-size: 19.45px;
   font-weight: 300;
   line-height: 1;
-  color: #797979;
+  color: var(--tuner-label);
+  transition: color 250ms ease;
 }
 
 .dial-label {
   position: absolute;
   transform: translateX(-50%);
   white-space: nowrap;
-  color: #ffffff;
-  color: #797979;
+  color: var(--tuner-label);
+  transition: color 250ms ease;
 }
 
 .dial-label-current {
-  color: #ffffff;
+  color: var(--tuner-label-active);
 }
+
+/* ─── Control panel ──────────────────────────────────────────────────────── */
 
 .control-panel {
   width: 100%;
@@ -211,10 +259,11 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  background: #f5f5f5;
-  border: 1.5px solid #e7e7e7;
+  background: var(--control-bg);
+  border: 1.5px solid var(--control-border);
   border-radius: 20px 20px 52px 52px;
   box-sizing: border-box;
+  transition: background-color 250ms ease, border-color 250ms ease;
 }
 
 .control-row {
@@ -234,6 +283,7 @@
   align-items: center;
   justify-content: center;
   transition: transform 120ms ease, opacity 120ms ease;
+  color: var(--text-primary);
 }
 
 .control-button:hover {
@@ -263,7 +313,6 @@
 .transport-icon {
   display: block;
   flex-shrink: 0;
-  object-fit: contain;
 }
 
 .transport-icon-small {
@@ -279,8 +328,11 @@
 .panel-divider {
   width: 322px;
   margin: 0 auto;
-  border-top: 1.5px solid #dddddd;
+  border-top: 1.5px solid var(--divider);
+  transition: border-color 250ms ease;
 }
+
+/* ─── Speaker / volume ───────────────────────────────────────────────────── */
 
 .speaker-panel {
   width: 331px;
@@ -304,6 +356,11 @@
   display: block;
   flex-shrink: 0;
   object-fit: contain;
+  transition: filter 250ms ease;
+}
+
+[data-theme='dark'] .volume-icon {
+  filter: brightness(0) invert(1) brightness(0.894);
 }
 
 .speaker-grid-interactive {
@@ -339,15 +396,8 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #d3d3d3;
-}
-
-.speaker-dot-dark {
-  background: #000000;
-}
-
-.speaker-dot-half {
-  background: linear-gradient(90deg, #000000 54%, #d3d3d3 54%);
+  background: var(--dot-inactive);
+  transition: background-color 250ms ease;
 }
 
 .speaker-dot-empty {
