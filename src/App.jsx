@@ -12,6 +12,7 @@ const TUNER_SNAP_DELAY = 120
 const TUNER_SNAP_THRESHOLD_MHZ = 0.3
 const TUNER_SNAP_ANIMATION_MS = 180
 const DEFAULT_VOLUME = 0.16
+const STREAM_UNAVAILABLE_MESSAGE = 'Stream is not available yet.'
 
 const speakerPattern = [
   ['dark', 'dark', 'half', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light', 'light'],
@@ -23,11 +24,19 @@ const speakerPattern = [
 const SPEAKER_COLUMNS = speakerPattern[0].length
 
 function stationHasSourceConfig(station) {
-  if (station.streamType === 'direct') {
-    return Boolean(station.streamUrl)
+  if (!station.isPlayable) {
+    return false
   }
 
-  return Boolean(station.apiUrl)
+  if (station.streamType === 'direct') {
+    return Boolean(station.streamUrl?.trim())
+  }
+
+  if (station.streamType === 'json-api' || station.streamType === 'plain-text-api') {
+    return Boolean(station.apiUrl?.trim())
+  }
+
+  return false
 }
 
 function isHlsStream(url) {
@@ -44,6 +53,15 @@ function isValidStreamUrl(url) {
 }
 
 async function resolveStreamUrl(station) {
+  console.log('[STREAM] resolving station:', {
+    stationId: station.id,
+    streamType: station.streamType,
+  })
+
+  if (!station.isPlayable || !station.streamType || station.streamType === 'unavailable') {
+    throw new Error(STREAM_UNAVAILABLE_MESSAGE)
+  }
+
   if (station.streamType === 'direct') {
     const directUrl = station.streamUrl?.trim() ?? ''
 
@@ -55,7 +73,11 @@ async function resolveStreamUrl(station) {
       throw new Error('The direct stream URL is missing or invalid.')
     }
 
-    console.log('[STREAM] final streamUrl:', directUrl)
+    console.log('[STREAM] resolved station:', {
+      stationId: station.id,
+      streamType: station.streamType,
+      finalResolvedStreamUrl: directUrl,
+    })
     return directUrl
   }
 
@@ -102,7 +124,11 @@ async function resolveStreamUrl(station) {
       throw new Error('The station API returned an invalid stream URL.')
     }
 
-    console.log('[STREAM] final streamUrl:', streamUrl)
+    console.log('[STREAM] resolved station:', {
+      stationId: station.id,
+      streamType: station.streamType,
+      finalResolvedStreamUrl: streamUrl,
+    })
     return streamUrl
   }
 
@@ -117,7 +143,11 @@ async function resolveStreamUrl(station) {
       throw new Error('The station API returned an invalid stream URL.')
     }
 
-    console.log('[STREAM] final streamUrl:', text)
+    console.log('[STREAM] resolved station:', {
+      stationId: station.id,
+      streamType: station.streamType,
+      finalResolvedStreamUrl: text,
+    })
     return text
   }
 
@@ -183,6 +213,7 @@ function App() {
   const [isDialDragging, setIsDialDragging] = useState(false)
   const [volumeValue, setVolumeValue] = useState(DEFAULT_VOLUME)
   const [isVolumeDragging, setIsVolumeDragging] = useState(false)
+  const [playbackMessage, setPlaybackMessage] = useState('')
   const audioRef = useRef(null)
   const hlsRef = useRef(null)
   const playRequestRef = useRef(0)
@@ -315,6 +346,7 @@ function App() {
     function handlePlaying() {
       setIsLoading(false)
       setIsPlaying(true)
+      setPlaybackMessage('')
     }
 
     function handlePause() {
@@ -335,6 +367,8 @@ function App() {
 
     function handleError() {
       console.log('[AUDIO] error details:', {
+        stationId: sortedStations[currentIndexRef.current]?.id,
+        streamType: sortedStations[currentIndexRef.current]?.streamType,
         currentSrc: audio.currentSrc,
         errorCode: audio.error?.code,
         errorMessage: audio.error?.message,
@@ -343,6 +377,7 @@ function App() {
       })
       setIsLoading(false)
       setIsPlaying(false)
+      setPlaybackMessage('The stream could not be played right now.')
     }
 
     audio.addEventListener('loadstart', handleLoadStart)
@@ -471,6 +506,7 @@ function App() {
     }
 
     setCurrentIndex(index)
+    setPlaybackMessage('')
 
     if (shouldResumePlayback) {
       startPlayback(selectedStation)
@@ -719,15 +755,23 @@ function App() {
     }
 
     playRequestRef.current = playRequestId
+    console.log('[PLAYBACK] request:', {
+      stationId: station.id,
+      streamType: station.streamType,
+      isPlayable: station.isPlayable,
+    })
 
     if (!stationHasSourceConfig(station)) {
+      clearAudioSource()
       setIsLoading(false)
       setIsPlaying(false)
+      setPlaybackMessage(STREAM_UNAVAILABLE_MESSAGE)
       return
     }
 
     setIsLoading(true)
     setIsPlaying(false)
+    setPlaybackMessage('')
 
     ;(async () => {
       try {
@@ -752,7 +796,7 @@ function App() {
         if (playPromise) {
           await playPromise
         }
-      } catch {
+      } catch (error) {
         if (playRequestRef.current !== playRequestId) {
           return
         }
@@ -760,6 +804,11 @@ function App() {
         clearAudioSource()
         setIsLoading(false)
         setIsPlaying(false)
+        setPlaybackMessage(
+          error instanceof Error && error.message
+            ? error.message
+            : 'The stream could not be played right now.',
+        )
       }
     })()
   }
@@ -793,6 +842,7 @@ function App() {
       audio.pause()
       destroyHlsPlayer()
       setIsLoading(false)
+      setPlaybackMessage('')
       return
     }
 
@@ -915,7 +965,10 @@ function App() {
             <span className="frequency-value">{visualFrequency.toFixed(1)}</span>
             <span className="frequency-unit">MHz</span>
           </div>
-          <p className="station-name">{currentStation.name}</p>
+          <p className="station-name">
+            {currentStation.name}
+            {playbackMessage ? ` · ${playbackMessage}` : ''}
+          </p>
         </section>
 
         <div className="bottom-section">
@@ -985,6 +1038,7 @@ function App() {
                 label={isPlaying ? 'Pause' : 'Play'}
                 className="control-button-large"
                 onClick={togglePlayback}
+                disabled={!currentStation.isPlayable}
               >
                 {isPlaying ? <PauseIcon /> : <PlayIcon />}
               </ControlButton>
@@ -1041,13 +1095,14 @@ function ThemeToggle({ theme, onToggle }) {
   )
 }
 
-function ControlButton({ children, className, label, onClick }) {
+function ControlButton({ children, className, label, onClick, disabled = false }) {
   return (
     <button
       type="button"
       className={`control-button ${className}`}
       aria-label={label}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>
