@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import Hls from 'hls.js'
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
@@ -1076,6 +1077,7 @@ function App() {
 
         <audio ref={audioRef} preload="none" />
       </section>
+      <Analytics />
     </main>
   )
 }
